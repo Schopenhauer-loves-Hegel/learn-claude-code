@@ -8,24 +8,19 @@ This skill provides expertise in verifying Triton and PyTorch kernel implementat
 
 ```bash
 # Verify using default example
-cd /share/project/tj/workspace/agent_exploration/learn-claude-code/skills/triton-verify
-python verify_helper.py triton
+python /share/project/tj/workspace/agent_exploration/learn-claude-code/skills/triton-verify/verify_helper.py triton
 
 # Verify with custom data
-python verify_helper.py triton --data /path/to/your/data.json
+python /share/project/tj/workspace/agent_exploration/learn-claude-code/skills/triton-verify/verify_helper.py triton --data /path/to/your/data.json
 
 # Verify test function
-python verify_helper.py test_func
+python /share/project/tj/workspace/agent_exploration/learn-claude-code/skills/triton-verify/verify_helper.py test_func
 
 # Verify benchmark function
-python verify_helper.py benchmark_func
-```
+python /share/project/tj/workspace/agent_exploration/learn-claude-code/skills/triton-verify/verify_helper.py benchmark_func
 
-### Using the Original Test Script
-
-```bash
-cd /share/project/tj/workspace/TritonCopilotServer
-python test/test_server_api_v3.py --test-type verify --endpoint /verify/triton
+# Get help
+python /share/project/tj/workspace/agent_exploration/learn-claude-code/skills/triton-verify/verify_helper.py --help
 ```
 
 ## Files

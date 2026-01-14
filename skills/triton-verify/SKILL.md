@@ -16,10 +16,9 @@ The verification service can validate:
 
 ## Server Configuration
 
-- **Server Path**: `/share/project/tj/workspace/TritonCopilotServer`
-- **Test Script**: `test/test_server_api_v3.py`
 - **Server URL**: `http://172.24.13.255:8890` (default, may need to be updated)
 - **Vendor Prefix**: `offline/nvidia/0` (if applicable)
+- **Timeout**: 300 seconds (default)
 
 ## Available Verification Endpoints
 
@@ -75,18 +74,27 @@ Validates a performance benchmark function.
 
 ## How to Use the Verification Service
 
-### Method 1: Using the Test Script Directly
+### Method 1: Using the Helper Script (Recommended)
+
+The skill includes `verify_helper.py` which provides an easy-to-use interface:
 
 ```bash
-cd /share/project/tj/workspace/TritonCopilotServer
-python test/test_server_api_v3.py --test-type verify --endpoint /verify/triton
-```
+# Verify using built-in example
+python /share/project/tj/workspace/agent_exploration/learn-claude-code/skills/triton-verify/verify_helper.py triton
 
-This will run the verification using the built-in test data.
+# Verify with custom data file
+python /share/project/tj/workspace/agent_exploration/learn-claude-code/skills/triton-verify/verify_helper.py triton --data /path/to/data.json
+
+# Verify test function
+python /share/project/tj/workspace/agent_exploration/learn-claude-code/skills/triton-verify/verify_helper.py test_func
+
+# Verify benchmark function
+python /share/project/tj/workspace/agent_exploration/learn-claude-code/skills/triton-verify/verify_helper.py benchmark_func
+```
 
 ### Method 2: Programmatic Usage
 
-To verify custom kernels, you need to:
+To verify custom kernels programmatically, you need to:
 
 1. **Prepare your data** in the correct format (see examples in `skills/triton-verify/examples/`)
 2. **Send a POST request** to the verification endpoint
@@ -248,20 +256,25 @@ See the `examples/` directory for complete working examples:
 
 **Verify Triton Kernel:**
 ```bash
-python test/test_server_api_v3.py --test-type verify --endpoint /verify/triton
+python /share/project/tj/workspace/agent_exploration/learn-claude-code/skills/triton-verify/verify_helper.py triton
 ```
 
 **Verify Test Function:**
 ```bash
-python test/test_server_api_v3.py --test-type verify --endpoint /verify/test_func
+python /share/project/tj/workspace/agent_exploration/learn-claude-code/skills/triton-verify/verify_helper.py test_func
 ```
 
 **Verify Benchmark Function:**
 ```bash
-python test/test_server_api_v3.py --test-type verify --endpoint /verify/benchmark_func
+python /share/project/tj/workspace/agent_exploration/learn-claude-code/skills/triton-verify/verify_helper.py benchmark_func
 ```
 
-**List all available endpoints:**
+**Verify with custom data:**
 ```bash
-python test/test_server_api_v3.py --list-endpoints
+python /share/project/tj/workspace/agent_exploration/learn-claude-code/skills/triton-verify/verify_helper.py triton --data /path/to/data.json
+```
+
+**Get help:**
+```bash
+python /share/project/tj/workspace/agent_exploration/learn-claude-code/skills/triton-verify/verify_helper.py --help
 ```
