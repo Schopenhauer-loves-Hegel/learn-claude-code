@@ -12,7 +12,7 @@ from typing import Dict, Any
 
 # Server configuration
 BASE_URL = "http://172.24.13.255:8890"
-VENDOR = "offline/nvidia/0"
+VENDOR = "online/nvidia/0"
 REQUEST_TIMEOUT = 300
 
 # Verification endpoints
@@ -53,6 +53,17 @@ async def verify_kernel(
                 timeout=aiohttp.ClientTimeout(total=timeout)
             ) as response:
                 result = await response.json()
+
+                # Check if service returned an error
+                if response.status != 200:
+                    return {
+                        "status_code": response.status,
+                        "url": url,
+                        "error": "VERIFICATION_SERVICE_ERROR",
+                        "message": "The verification service is not available or returned an error. Do not retry - this is a service issue, not a data issue.",
+                        "details": result
+                    }
+
                 return {
                     "status_code": response.status,
                     "url": url,
@@ -62,13 +73,24 @@ async def verify_kernel(
         return {
             "status_code": None,
             "url": url,
-            "error": f"Request timeout after {timeout}s"
+            "error": "VERIFICATION_SERVICE_TIMEOUT",
+            "message": f"The verification service did not respond within {timeout}s. Do not retry - this is a service issue."
+        }
+    except aiohttp.ClientConnectorError as e:
+        return {
+            "status_code": None,
+            "url": url,
+            "error": "VERIFICATION_SERVICE_UNAVAILABLE",
+            "message": "Cannot connect to the verification service. The service may be offline. Do not retry - check if the service is running.",
+            "details": str(e)
         }
     except Exception as e:
         return {
             "status_code": None,
             "url": url,
-            "error": str(e)
+            "error": "VERIFICATION_SERVICE_ERROR",
+            "message": "An unexpected error occurred while calling the verification service. Do not retry.",
+            "details": str(e)
         }
 
 

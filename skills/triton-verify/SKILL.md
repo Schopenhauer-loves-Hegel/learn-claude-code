@@ -248,23 +248,60 @@ else:
 
 The `skills/triton-verify/examples/` directory contains complete examples for each verification type. Use these as templates for your own verifications.
 
-## Troubleshooting
+## Error Handling
 
-### Issue: "Request timeout"
-- **Cause**: Verification is taking too long (>300s)
-- **Solution**: Reduce test case complexity or increase timeout
+The verify_helper.py script provides clear error messages when the verification service is unavailable:
 
-### Issue: "success: False" with traceback
-- **Cause**: Kernel implementation has bugs
-- **Solution**: Read the traceback carefully, fix the code, and re-verify
+### Service Unavailable Errors
 
-### Issue: "Connection refused"
-- **Cause**: Server is not running or URL is incorrect
-- **Solution**: Check if the server is running and update the BASE_URL in the test script
+**VERIFICATION_SERVICE_UNAVAILABLE**
+```json
+{
+  "status_code": null,
+  "url": "...",
+  "error": "VERIFICATION_SERVICE_UNAVAILABLE",
+  "message": "Cannot connect to the verification service. The service may be offline. Do not retry - check if the service is running."
+}
+```
+**Action**: Check if the verification service is running. Do not retry with different data.
 
-### Issue: Empty or missing fields in response
-- **Cause**: Data format is incorrect
-- **Solution**: Compare your data structure with the examples
+**VERIFICATION_SERVICE_TIMEOUT**
+```json
+{
+  "status_code": null,
+  "url": "...",
+  "error": "VERIFICATION_SERVICE_TIMEOUT",
+  "message": "The verification service did not respond within 300s. Do not retry - this is a service issue."
+}
+```
+**Action**: The service is too slow or hung. Do not retry.
+
+**VERIFICATION_SERVICE_ERROR** (HTTP status != 200)
+```json
+{
+  "status_code": 500,
+  "url": "...",
+  "error": "VERIFICATION_SERVICE_ERROR",
+  "message": "The verification service is not available or returned an error. Do not retry - this is a service issue, not a data issue.",
+  "details": {...}
+}
+```
+**Action**: The service returned an error. Check the details field. Do not retry with different data.
+
+### Verification Failure (Service OK, but tests failed)
+
+```json
+{
+  "status_code": 200,
+  "url": "...",
+  "result": {
+    "success": false,
+    "traceback": "...",
+    "info": {"success": 0, "failed": 3, "total": 3}
+  }
+}
+```
+**Action**: The service is working, but the kernel has bugs. Read the traceback and fix the code.
 
 ## Examples
 
