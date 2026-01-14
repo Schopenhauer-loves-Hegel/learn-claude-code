@@ -120,29 +120,50 @@ print(f"Verification {'passed' if result['success'] else 'failed'}")
 
 ## Understanding Verification Results
 
-The verification service returns a JSON response with the following structure:
+The verify_helper.py script returns a JSON response with the following structure:
 
-```python
+```json
 {
-    "op_name": str,           # Name of the operation verified
-    "success": bool,          # True if verification passed, False otherwise
-    "traceback": str | None,  # Error traceback if verification failed
-    "params": dict,           # Test parameters used
-    "speedup": list | None,   # Performance comparison results (if benchmark was run)
+  "status_code": 200,
+  "url": "http://172.24.13.255:8890/offline/nvidia/0/verify/triton",
+  "result": {
+    "op_name": "gather",
+    "success": true,
+    "traceback": null,
+    "params": {...},
+    "speedup": null,
     "info": {
-        "success": int,       # Number of successful test cases
-        "failed": int,        # Number of failed test cases
-        "total": int          # Total number of test cases
+      "success": 9,
+      "failed": 0,
+      "total": 9
     },
-    "code": str               # The verified code
+    "code": "..."
+  }
 }
 ```
 
-**Key Fields:**
-- **success**: Main indicator - `True` means all tests passed
-- **info**: Detailed statistics about test execution
-- **traceback**: If `success` is `False`, this contains the error details
-- **speedup**: Performance comparison (only for benchmark functions)
+**Top-level fields:**
+- **status_code**: HTTP status code (200 = success, 500 = server error)
+- **url**: The verification endpoint URL that was called
+- **result**: The raw response from the verification service
+
+**Result fields (from verification service):**
+- **op_name**: Name of the operation verified
+- **success**: `true` if verification passed, `false` otherwise
+- **traceback**: Error traceback if verification failed (null if passed)
+- **params**: Test parameters used
+- **speedup**: Performance comparison results (null if not a benchmark)
+- **info**: Test execution statistics
+  - **success**: Number of successful test cases
+  - **failed**: Number of failed test cases
+  - **total**: Total number of test cases
+- **code**: The verified code
+
+**How to interpret:**
+1. Check `status_code` - should be 200
+2. Check `result.success` - should be `true`
+3. Check `result.info` - shows test statistics
+4. If failed, check `result.traceback` for error details
 
 ## Common Verification Workflows
 
