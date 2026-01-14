@@ -1,0 +1,6 @@
+{
+  "test_func_name": "test_add",
+  "test_func_code": "\nimport bench\nfrom bench.sandbox.test.test_parametrize import parametrize, label\nimport torch\n@label(\"add\")\ndef test_add():\n    assert bench.add(1,2)==bench.triton.add(1,2)\n",
+  "torch_kernel_name": "add",
+  "torch_kernel_code": "def add(a, b): return a + b"
+}
